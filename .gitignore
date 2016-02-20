@@ -1,4 +1,3 @@
 *.mp3
-input
-output
+*.wav
 .DS_STORE

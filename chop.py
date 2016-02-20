@@ -6,6 +6,7 @@ import re
 SLICE_DURATION = 200
 REGEX_PATTERN = '([0-9]+)\.0+\t'
 NOTES = ['c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b']
+TMP_PATH = '.tmp/tmp.mp3'
 
 
 def get_slices(audio, slice_duration):
@@ -20,9 +21,8 @@ def get_slices(audio, slice_duration):
 
 
 def get_pitch_from_slice(audio_slice):
-	path = '.tmp/tmp.mp3'
-	audio_slice.export(path, format='mp3')
-	output = subprocess.check_output(['aubionotes', path])
+	audio_slice.export(TMP_PATH, format='mp3')
+	output = subprocess.check_output(['aubionotes', TMP_PATH])
 	matches = re.search(REGEX_PATTERN, output)
 	if matches:
 		midi_note_number = int(matches.group(1))
@@ -31,13 +31,14 @@ def get_pitch_from_slice(audio_slice):
 
 
 def main():
-	audio = AudioSegment.from_file("input/kanye.mp3", format="mp3")
+	audio = AudioSegment.from_file('input/kanye.mp3', format='mp3')
 	slices = get_slices(audio, SLICE_DURATION)
 
 	for audio_slice in slices:
 		pitch = get_pitch_from_slice(audio_slice)
 		if pitch:
-			print pitch
+			file_name = str(hash(audio_slice))
+			audio_slice.export('output/%s/%s.mp3' % (pitch, file_name), format='mp3')
 
 
 if __name__ == '__main__':
