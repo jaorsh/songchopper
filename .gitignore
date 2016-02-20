@@ -1,4 +1,4 @@
 *.mp3
-input
-output
 node_modules
+*.wav
+.DS_STORE
