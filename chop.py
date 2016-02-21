@@ -5,7 +5,7 @@ import sys
 import os
 
 
-SLICE_DURATION = 200
+SLICE_DURATION = 350
 REGEX_PATTERN = '([0-9]+)\.0+\t'
 NOTES = ['c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b']
 TMP_PATH = '.tmp/tmp.mp3'
@@ -38,6 +38,7 @@ def get_pitch_from_slice(audio_slice):
 def main(input_file_path):
 	filename, file_extension = os.path.splitext(input_file_path)
 	file_extension = file_extension[1:]  # remove the leading .
+
 	audio = AudioSegment.from_file(input_file_path, format=file_extension)
 	slices = get_slices(audio, SLICE_DURATION)
 
@@ -50,4 +51,7 @@ def main(input_file_path):
 
 if __name__ == '__main__':
 	args = sys.argv
-	main(args[1])
+	if len(args) == 2:
+		main(args[1])
+	else:
+		print "USAGE: python chop.py <path to input file>"
