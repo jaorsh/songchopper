@@ -124,10 +124,10 @@ textarea {
     background: #ff0000;
   }
     .boxes {
-        width: 400px;
+        width: 500px;
         margin: 20px auto;
     }
-.boxes div { background:#323232;  width: 100px; height:100px; display:inline-block; line-height:100px; font-size:2em; color:white;}
+.boxes div { background:#323232;width: 120px;height: 120px; display:inline-block;line-height: 120px; font-size:2em; color:white;margin: 10px;}
 
 
 
