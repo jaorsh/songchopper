@@ -1,6 +1,8 @@
 from pydub import AudioSegment
 import subprocess
 import re
+import sys
+import os
 
 
 SLICE_DURATION = 200
@@ -23,6 +25,9 @@ def get_slices(audio, slice_duration):
 def get_pitch_from_slice(audio_slice):
 	audio_slice.export(TMP_PATH, format='mp3')
 	output = subprocess.check_output(['aubionotes', TMP_PATH])
+	if output.count('\n') != 3:
+		# if there are more than one pitch in this segment, ignore it
+		return
 	matches = re.search(REGEX_PATTERN, output)
 	if matches:
 		midi_note_number = int(matches.group(1))
@@ -30,8 +35,10 @@ def get_pitch_from_slice(audio_slice):
 		return NOTES[modded_note_number]
 
 
-def main():
-	audio = AudioSegment.from_file('input/kanye.mp3', format='mp3')
+def main(input_file_path):
+	filename, file_extension = os.path.splitext(input_file_path)
+	file_extension = file_extension[1:]  # remove the leading .
+	audio = AudioSegment.from_file(input_file_path, format=file_extension)
 	slices = get_slices(audio, SLICE_DURATION)
 
 	for audio_slice in slices:
@@ -42,4 +49,5 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+	args = sys.argv
+	main(args[1])
