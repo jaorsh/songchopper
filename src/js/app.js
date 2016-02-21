@@ -2,8 +2,7 @@
   var tracks = [];
   var loop = 0;
   var freq = [4, 8, 12, 16];
-  var myAudio;
-  var ranAudio;
+  var myAudio, ranAudio, bank;
   var soundBank = {
     a: [],
     as: [],
@@ -69,19 +68,13 @@
 
   function init() {
 
-    myAudio = new Audio("../input/" +
-      output[0]);
+    bank = soundBank[pickRandomProperty(soundBank)];
+    var rand = bank[Math.floor(Math.random() * bank.length)];
+    setInterval(function() {
+      var a = new Audio("../" + rand);
+      a.play();
 
-    myAudio.addEventListener('ended', function() {
-      loop++;
-      if (loop % 4 === 0) {
-        addSample();
-      }
-      this.currentTime = 0;
-      this.play();
-    }, false);
-
-    myAudio.play();
+    }, 500);
 
   }
 
@@ -95,6 +88,7 @@
 
     myAudio.pause();
     ranAudio.pause();
+    bank.pause();
 
   }
 
@@ -102,27 +96,64 @@
     var bank = soundBank[note];
     if (bank) {
 
-      var rand = bank[Math.floor(Math.random() * bank.length)];
-      ranAudio = new Audio("../" + rand);
+      var start = function(counter) {
+        if (counter < bank.length) {
+          setTimeout(function() {
+            counter++;
+            var b = bank[counter];
+            ranAudio = new Audio("../" + b);
+            ranAudio.play();
 
-      setInterval(function() {
-        ranAudio.addEventListener('ended', function() {
-          loop++;
-          if (loop % 4 === 0) {
-            //  addSample();
-          }
-          this.currentTime = 0;
-          var rand = bank[Math.floor(Math.random() * bank.length)];
-          ranAudio = new Audio("../" + rand);
-          ranAudio.play();
-        }, false);
-
-      }, 500);
-
-      ranAudio.play();
+            start(counter);
+          }, 200);
+        }
+      }
+      start(0);
 
     }
+    /*var rand = bank[Math.floor(Math.random() * bank.length)];
+    ranAudio = new Audio("../" + rand);
+
+    var pGo = setInterval(function() {
+
+      var rand = bank[Math.floor(Math.random() * bank.length)];
+      ranAudio = new Audio("../" + rand);
+      ranAudio.play();
+
+    }, 500);
 
 
+
+    ranAudio.play();*/
 
   }
+
+
+
+  function pickRandomProperty(obj) {
+    var result;
+    var count = 0;
+    for (var prop in obj)
+      if (Math.random() < 1 / ++count)
+        result = prop;
+    return result;
+  }
+
+
+  /*
+
+  myAudio = new Audio("../input/" +
+    output[0]);
+
+  myAudio.addEventListener('ended', function() {
+    loop++;
+    if (loop % 4 === 0) {
+      addSample();
+    }
+    this.currentTime = 0;
+    this.play();
+  }, false);
+
+  myAudio.play();
+
+  */
